@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Notas</title>
+</head>
+<body>
+    <h1>Sistema de Notas</h1>
+
+    <!-- Sección de Resumen -->
+    <h2>Resumen Estadístico</h2>
+    <div id="resumen">
+        <p>Estudiantes que aprobaron: <span id="aprobados">0</span></p>
+        <p>Estudiantes que perdieron: <span id="reprobados">0</span></p>
+        <p>Estudiantes sin notas: <span id="sinNotas">0</span></p>
+    </div>
+
+    <!-- Sección de Filtros -->
+    <h2>Filtros de Búsqueda</h2>
+    <div id="filtros">
+        <p>
+            Código: 
+            <input type="text" id="filtroCodigo">
+        </p>
+        <p>
+            Nombre: 
+            <input type="text" id="filtroNombre">
+        </p>
+        <p>
+            Email: 
+            <input type="text" id="filtroEmail">
+        </p>
+        <p>
+            Estado:
+            <select id="filtroEstado">
+                <option value="">Todos</option>
+                <option value="Aprobado">Aprobados</option>
+                <option value="Reprobado">Reprobados</option>
+                <option value="Sin Notas">Sin Notas</option>
+            </select>
+        </p>
+        <p>
+            Rango de Nota:
+            Desde <input type="number" id="filtroNotaMin" min="0" max="5" step="0.1">
+            Hasta <input type="number" id="filtroNotaMax" min="0" max="5" step="0.1">
+        </p>
+        <button onclick="aplicarFiltros()">Buscar</button>
+        <button onclick="limpiarFiltros()">Limpiar Filtros</button>
+    </div>
+
+    <!-- Formulario para agregar/editar estudiante -->
+    <h2 id="tituloFormulario">Agregar Estudiante</h2>
+    <form id="formularioEstudiante">
+        <p>
+            Código: 
+            <input type="text" id="codigo" required>
+            <span id="errorCodigo" style="color: red;"></span>
+        </p>
+        <p>
+            Nombres: 
+            <input type="text" id="nombres" required>
+        </p>
+        <p>
+            Email: 
+            <input type="email" id="email" required>
+            <span id="errorEmail" style="color: red;"></span>
+        </p>
+        <button type="submit">Guardar</button>
+        <button type="button" onclick="cancelarEdicion()">Cancelar</button>
+    </form>
+
+    <!-- Tabla de estudiantes -->
+    <h2>Lista de Estudiantes</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Nombres</th>
+                <th>Email</th>
+                <th>Promedio</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tablaEstudiantes">
+            <!-- Las filas se generan en JavaScript -->
+        </tbody>
+    </table>
+
+    <!-- Formulario para agregar notas -->
+    <h2>Agregar Nota</h2>
+    <form id="formularioNota">
+        <p>
+            Código del Estudiante: 
+            <input type="text" id="codEstudiante" required>
+        </p>
+        <p>
+            Actividad: 
+            <input type="text" id="actividad" required>
+        </p>
+        <p>
+            Nota: 
+            <input type="number" id="nota" step="0.1" required>
+        </p>
+        <button type="submit">Guardar Nota</button>
+    </form>
+
+    <script src="js/app.js"></script>
+</body>
+</html> 
