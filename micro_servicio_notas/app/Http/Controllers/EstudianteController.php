@@ -96,4 +96,27 @@ class EstudianteController extends Controller
         $estudiante->delete();
         return response()->json(['mensaje' => 'Estudiante eliminado']);
     }
+
+    public function obtenerNotas($cod)
+    {
+        try {
+            $estudiante = Estudiante::with('notas')->find($cod);
+            
+            if (!$estudiante) {
+                return response()->json(['error' => 'Estudiante no encontrado'], 404);
+            }
+
+            $notas = $estudiante->notas;
+            $promedio = $notas->avg('nota');
+            $estudiante->promedio = round($promedio, 2);
+            $estudiante->estado = $promedio >= 3 ? 'Aprobado' : 'Reprobado';
+
+            return response()->json([
+                'estudiante' => $estudiante,
+                'notas' => $notas
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error al obtener las notas'], 500);
+        }
+    }
 }

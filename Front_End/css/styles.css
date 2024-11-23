@@ -1,0 +1,196 @@
+/* Estilos base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f4f8;
+    padding: 30px;
+}
+
+/* Contenedor principal */
+.container {
+    width: 90%;
+    margin: 0 auto;
+}
+
+/* Headers */
+h1 {
+    color: #2d3748;
+    margin-bottom: 40px;
+    text-align: center;
+    font-size: 28px;
+}
+
+h2, h3 {
+    color: #2d3748;
+    margin: 30px 0 20px 0;
+    text-align: center;
+}
+
+/* Tabla principal */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 12px;
+    margin: 25px 0;
+}
+
+th {
+    background-color: #2d3748;
+    color: white;
+    padding: 15px 25px;
+    text-align: left;
+    border-radius: 4px;
+}
+
+td {
+    padding: 15px 25px;
+    background-color: white;
+}
+
+/* Resumen estadístico */
+#resumen {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    margin: 30px 0;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#resumen p {
+    display: inline-block;
+    margin: 15px 30px;
+}
+
+/* Filtros y demás secciones */
+#filtros, #formularioEstudiante, #seccionNotas, #formularioNota {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    margin: 30px 0;
+}
+
+/* Espaciado en filtros */
+#filtros p {
+    margin: 15px 0;
+}
+
+/* Info Estudiante */
+#infoEstudiante {
+    background: #2d3748;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 25px 0;
+}
+
+#infoEstudiante p {
+    margin: 12px 0;
+}
+
+/* Inputs y Selects */
+input, select {
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin: 8px 0;
+    width: 200px;
+    transition: border-color 0.2s;
+}
+
+input:focus, select:focus {
+    border-color: #2d3748;
+    outline: none;
+}
+
+input[type="number"] {
+    width: 100px;
+}
+
+/* Botones */
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 8px;
+    transition: opacity 0.2s;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+/* Botones específicos */
+button[onclick*="editar"] {
+    background-color: #f1f5f9;
+    color: #0f172a;
+}
+
+button[onclick*="eliminar"] {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+button[onclick*="ver"], 
+button[type="submit"],
+button[onclick="aplicarFiltros()"] {
+    background-color: #0f172a;
+    color: white;
+}
+
+button[onclick="limpiarFiltros()"],
+button[type="button"] {
+    background-color: #f1f5f9;
+    color: #0f172a;
+}
+
+/* Mensajes de error */
+span[id^="error"] {
+    color: red;
+    font-size: 12px;
+}
+
+/* Colores de notas */
+.nota-muy-baja { background-color: #fee2e2; }
+.nota-baja { background-color: #fef9c3; }
+.nota-alta { background-color: #dcfce7; }
+
+/* Tabla de notas */
+.tabla-notas {
+    width: 100%;
+    margin: 15px 0;
+}
+
+/* Formulario dentro de notas */
+.formulario-notas {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 15px 0;
+}
+
+/* Resumen de notas */
+#resumenNotas {
+    margin: 30px 0;
+    padding: 20px;
+}
+
+#resumenNotas p {
+    margin: 15px 0;
+}
+
+/* Formulario de notas */
+.formulario-notas {
+    margin: 30px 0;
+    padding: 25px;
+}
+
+.formulario-notas form > * {
+    margin: 15px 0;
+}

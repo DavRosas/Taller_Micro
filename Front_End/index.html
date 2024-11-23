@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Notas</title>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <h1>Sistema de Notas</h1>
@@ -72,7 +73,7 @@
 
     <!-- Tabla de estudiantes -->
     <h2>Lista de Estudiantes</h2>
-    <table border="1">
+    <table>
         <thead>
             <tr>
                 <th>Código</th>
@@ -87,6 +88,76 @@
             <!-- Las filas se generan en JavaScript -->
         </tbody>
     </table>
+
+    <!-- Sección para mostrar información del estudiante y sus notas -->
+    <div id="seccionNotas" style="display: none;">
+        <h2>Información del Estudiante</h2>
+        <div id="infoEstudiante">
+            <p><strong>Código:</strong> <span id="estCodigo"></span></p>
+            <p><strong>Nombre:</strong> <span id="estNombre"></span></p>
+            <p><strong>Email:</strong> <span id="estEmail"></span></p>
+            <p><strong>Estado:</strong> <span id="estEstado"></span></p>
+            <p><strong>Promedio:</strong> <span id="estPromedio"></span></p>
+        </div>
+
+        <div class="filtros">
+            <h3>Filtros</h3>
+            <div>
+                <label>Buscar por actividad:</label>
+                <input type="text" id="filtroActividad" placeholder="Nombre de la actividad">
+            </div>
+            <div>
+                <label>Filtrar por rango de notas:</label>
+                <select id="filtroRango">
+                    <option value="">Todos los rangos</option>
+                    <option value="0-2">0.0 - 2.0 (Muy baja)</option>
+                    <option value="2-3">2.1 - 2.9 (Baja)</option>
+                    <option value="3-4">3.0 - 3.9 (Media)</option>
+                    <option value="4-5">4.0 - 5.0 (Alta)</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="resumenNotas" style="margin: 20px 0;">
+            <h3>Resumen de Notas</h3>
+            <p>Notas menores a 3: <span id="notasBajas">0</span></p>
+            <p>Notas mayores o iguales a 3: <span id="notasAltas">0</span></p>
+        </div>
+
+        <h3>Notas del Estudiante</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Actividad</th>
+                    <th>Nota</th>
+                </tr>
+            </thead>
+            <tbody id="tablaNotas">
+            </tbody>
+        </table>
+
+        <!-- Formulario para agregar/modificar notas -->
+        <div class="formulario-notas">
+            <h3>Registrar/Modificar Nota</h3>
+            <form id="formNota" onsubmit="return guardarNota(event)">
+                <input type="hidden" id="notaId">
+                <input type="hidden" id="codEstudiante">
+                
+                <div>
+                    <label>Actividad:</label>
+                    <input type="text" id="actividad" required>
+                </div>
+                
+                <div>
+                    <label>Nota:</label>
+                    <input type="number" id="nota" min="0" max="5" step="0.01" required>
+                </div>
+                
+                <button type="submit">Guardar Nota</button>
+                <button type="button" onclick="limpiarFormulario()">Cancelar</button>
+            </form>
+        </div>
+    </div>
 
     <!-- Formulario para agregar notas -->
     <h2>Agregar Nota</h2>

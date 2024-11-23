@@ -26,6 +26,7 @@ Route::prefix("app")->group(function() {
         Route::get("/estudiantes/{cod}", "show");
         Route::put("/estudiantes/{cod}", "update");
         Route::delete("/estudiantes/{cod}", "destroy"); // Nueva ruta
+        Route::get('/estudiantes/{cod}/notas', [EstudianteController::class, 'obtenerNotas']);
     });
 
     // Rutas para notas
@@ -33,5 +34,7 @@ Route::prefix("app")->group(function() {
         Route::get("/notas", "index");
         Route::post("/notas", "store");
         Route::get("/notas/estudiante/{codEstudiante}", "notasEstudiante");
+        Route::put("/notas/{id}", "update");
+        Route::delete('/notas/{id}', [NotaController::class, 'destroy']);
     });
 });

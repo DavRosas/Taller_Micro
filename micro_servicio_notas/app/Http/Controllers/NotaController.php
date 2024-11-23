@@ -3,44 +3,48 @@
 namespace App\Http\Controllers;
 
 use App\Models\Nota;
-use App\Models\Estudiante;
 use Illuminate\Http\Request;
 
 class NotaController extends Controller
 {
-    // Mostrar todas las notas
-    public function index()
-    {
-        $notas = Nota::all();
-        return response()->json($notas);
-    }
-
-    // Crear una nota
     public function store(Request $request)
     {
-        $nota = new Nota();
-        $nota->actividad = $request->actividad;
-        $nota->nota = $request->nota;
-        $nota->codEstudiante = $request->codEstudiante;
-        $nota->save();
+        $request->validate([
+            'actividad' => 'required',
+            'nota' => 'required|numeric|min:0|max:5',
+            'codEstudiante' => 'required'
+        ]);
 
-        return response()->json(['mensaje' => 'Nota guardada']);
+        $nota = Nota::create($request->all());
+        return response()->json($nota, 201);
     }
 
-    // Ver notas de un estudiante
-    public function notasEstudiante($codEstudiante)
+    public function update(Request $request, $id)
     {
-        $estudiante = Estudiante::find($codEstudiante);
-        if(!$estudiante) {
-            return response()->json(['mensaje' => 'Estudiante no encontrado']);
+        $nota = Nota::find($id);
+        
+        if (!$nota) {
+            return response()->json(['error' => 'Nota no encontrada'], 404);
         }
 
-        $notas = Nota::where('codEstudiante', $codEstudiante)->get();
-        return response()->json([
-            'estudiante' => $estudiante->nombres,
-            'notas' => $notas,
-            'promedio' => $estudiante->promedio,
-            'estado' => $estudiante->estado
+        $request->validate([
+            'actividad' => 'required',
+            'nota' => 'required|numeric|min:0|max:5'
         ]);
+
+        $nota->update($request->all());
+        return response()->json($nota);
+    }
+
+    public function destroy($id)
+    {
+        $nota = Nota::find($id);
+        
+        if (!$nota) {
+            return response()->json(['error' => 'Nota no encontrada'], 404);
+        }
+
+        $nota->delete();
+        return response()->json(['mensaje' => 'Nota eliminada correctamente']);
     }
 }

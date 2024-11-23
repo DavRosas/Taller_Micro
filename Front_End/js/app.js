@@ -6,6 +6,7 @@ let codigoOriginal = '';
 // Variables globales para los datos
 let todosLosEstudiantes = [];
 let estudiantesFiltrados = [];
+let notasEstudiante = []; // Variable global para guardar las notas
 
 // Validar email
 function validarEmail(email) {
@@ -73,6 +74,8 @@ function cargarEstudiantes() {
 
 // Función para mostrar estudiantes en la tabla
 function mostrarEstudiantes() {
+    console.log('Mostrando estudiantes:', estudiantesFiltrados); // Agregamos este log
+    
     const tabla = document.getElementById('tablaEstudiantes');
     tabla.innerHTML = '';
 
@@ -93,6 +96,7 @@ function mostrarEstudiantes() {
                 <td>
                     <button onclick="editarEstudiante('${estudiante.cod}')">Editar</button>
                     <button onclick="eliminarEstudiante('${estudiante.cod}', '${estudiante.nombres}')">Eliminar</button>
+                    <button onclick="verNotas('${estudiante.cod}')">Ver Notas</button>
                 </td>
             </tr>
         `;
@@ -225,26 +229,191 @@ function guardarEstudiante(evento) {
 }
 
 // Función para guardar nota
-function guardarNota(evento) {
-    evento.preventDefault();
+function guardarNota(event) {
+    event.preventDefault();
+    
+    const notaId = document.getElementById('notaId').value;
+    const codEstudiante = document.getElementById('codEstudiante').value;
+    const actividad = document.getElementById('actividad').value;
+    const nota = parseFloat(document.getElementById('nota').value);
+
+    // Validaciones existentes...
+    if (nota < 0 || nota > 5) {
+        alert('La nota debe estar entre 0 y 5');
+        return false;
+    }
+
+    if (nota.toString().split('.')[1]?.length > 2) {
+        alert('La nota solo puede tener hasta 2 decimales');
+        return false;
+    }
 
     const datos = {
-        codEstudiante: document.getElementById('codEstudiante').value,
-        actividad: document.getElementById('actividad').value,
-        nota: document.getElementById('nota').value
+        actividad: actividad,
+        nota: nota,
+        codEstudiante: codEstudiante
     };
 
-    fetch(URL + '/notas', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+    const url = notaId ? 
+        `${URL}/notas/${notaId}` : 
+        `${URL}/notas`;
+
+    const method = notaId ? 'PUT' : 'POST';
+
+    fetch(url, {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify(datos)
     })
     .then(response => response.json())
-    .then(() => {
-        alert('Nota guardada');
-        document.getElementById('formularioNota').reset();
-        cargarEstudiantes();
+    .then(data => {
+        alert('Nota guardada exitosamente');
+        limpiarFormulario();
+        verNotas(codEstudiante); // Actualiza la sección de notas
+        cargarEstudiantes(); // Actualiza la tabla principal
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al guardar la nota');
     });
+
+    return false;
+}
+
+function limpiarFormulario() {
+    document.getElementById('notaId').value = '';
+    document.getElementById('actividad').value = '';
+    document.getElementById('nota').value = '';
+}
+
+function editarNota(id, actividad, nota) {
+    document.getElementById('notaId').value = id;
+    document.getElementById('actividad').value = actividad;
+    document.getElementById('nota').value = nota;
+}
+
+// Función para ver notas
+function verNotas(codigo) {
+    document.getElementById('codEstudiante').value = codigo;
+    
+    fetch(`${URL}/estudiantes/${codigo}/notas`)
+        .then(response => response.json())
+        .then(datos => {
+            // Guardar notas en variable global
+            notasEstudiante = datos.notas;
+            
+            // Mostrar información del estudiante
+            document.getElementById('estCodigo').textContent = datos.estudiante.cod;
+            document.getElementById('estNombre').textContent = datos.estudiante.nombres;
+            document.getElementById('estEmail').textContent = datos.estudiante.email;
+            document.getElementById('estEstado').textContent = datos.estudiante.estado;
+            document.getElementById('estPromedio').textContent = datos.estudiante.promedio;
+
+            // Mostrar notas
+            mostrarNotasFiltradas();
+
+            // Mostrar sección
+            document.getElementById('seccionNotas').style.display = 'block';
+
+            // Agregar eventos de filtro
+            document.getElementById('filtroActividad').addEventListener('input', mostrarNotasFiltradas);
+            document.getElementById('filtroRango').addEventListener('change', mostrarNotasFiltradas);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al obtener las notas del estudiante');
+        });
+}
+
+function mostrarNotasFiltradas() {
+    const filtroActividad = document.getElementById('filtroActividad').value.toLowerCase();
+    const filtroRango = document.getElementById('filtroRango').value;
+    
+    const notasFiltradas = notasEstudiante.filter(nota => {
+        const cumpleFiltroActividad = nota.actividad.toLowerCase().includes(filtroActividad);
+        
+        let cumpleFiltroRango = true;
+        if (filtroRango) {
+            const [min, max] = filtroRango.split('-').map(Number);
+            const notaNum = parseFloat(nota.nota);
+            cumpleFiltroRango = notaNum >= min && notaNum <= max;
+        }
+        
+        return cumpleFiltroActividad && cumpleFiltroRango;
+    });
+
+    // Calcular resumen de notas
+    const resumen = notasFiltradas.reduce((acc, nota) => {
+        const notaNum = parseFloat(nota.nota);
+        if (notaNum < 3) {
+            acc.bajas++;
+        } else {
+            acc.altas++;
+        }
+        return acc;
+    }, { bajas: 0, altas: 0 });
+
+    // Actualizar resumen en el HTML
+    document.getElementById('notasBajas').textContent = resumen.bajas;
+    document.getElementById('notasAltas').textContent = resumen.altas;
+
+    // Mostrar notas en la tabla (código existente)
+    const tablaNotas = document.getElementById('tablaNotas');
+    tablaNotas.innerHTML = '';
+
+    notasFiltradas.forEach(nota => {
+        let clase = '';
+        const notaNum = parseFloat(nota.nota);
+        
+        if (notaNum <= 2.0) {
+            clase = 'nota-muy-baja';
+        } else if (notaNum < 3.0) {
+            clase = 'nota-baja';
+        } else if (notaNum < 4.0) {
+            clase = 'nota-media';
+        } else {
+            clase = 'nota-alta';
+        }
+
+        tablaNotas.innerHTML += `
+            <tr>
+                <td>${nota.actividad}</td>
+                <td class="${clase}">${nota.nota}</td>
+                <td>
+                    <button onclick="editarNota('${nota.id}', '${nota.actividad}', '${nota.nota}')">
+                        Editar
+                    </button>
+                    <button onclick="eliminarNota('${nota.id}', '${nota.actividad}')">
+                        Eliminar
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+function eliminarNota(id, actividad) {
+    const confirmar = confirm(`¿Está seguro que desea eliminar la nota de la actividad "${actividad}"?`);
+    
+    if (confirmar) {
+        const codEstudiante = document.getElementById('codEstudiante').value;
+        
+        fetch(`${URL}/notas/${id}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert('Nota eliminada exitosamente');
+            verNotas(codEstudiante); // Actualiza la sección de notas
+            cargarEstudiantes(); // Actualiza la tabla principal
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al eliminar la nota');
+        });
+    }
 }
 
 // Cuando la página cargue
